@@ -3,7 +3,7 @@ module Pushr
     POSTFIX = 'gcm'
 
     attr_accessor :registration_ids, :notification_key, :collapse_key, :delay_while_idle, :time_to_live, :data,
-                  :restricted_package_name, :dry_run
+                  :restricted_package_name, :dry_run, :priority
     validates :registration_ids, presence: true
     validate :registration_ids_array
     validate :data_size
@@ -14,7 +14,7 @@ module Pushr
     def to_message
       hsh = {}
       hsh['registration_ids'] = registration_ids
-      %w(notification_key collapse_key delay_while_idle time_to_live data restricted_package_name dry_run).each do |variable|
+      %w(notification_key collapse_key delay_while_idle time_to_live data restricted_package_name dry_run priority).each do |variable|
         hsh[variable] = send(variable) if send(variable)
       end
       MultiJson.dump(hsh)
@@ -22,7 +22,7 @@ module Pushr
 
     def to_hash
       hsh = { type: self.class.to_s, app: app, registration_ids: registration_ids, notification_key: notification_key,
-              collapse_key: collapse_key, delay_while_idle: delay_while_idle, time_to_live: time_to_live, data: data }
+              collapse_key: collapse_key, delay_while_idle: delay_while_idle, time_to_live: time_to_live, data: data, priority: priority }
       hsh[Pushr::Core.external_id_tag] = external_id if external_id
       hsh
     end
